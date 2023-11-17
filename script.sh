@@ -3,6 +3,16 @@
 #bash-version:5.2.15(1)-release
 #Scrip para la ejecucion de diferentes herramientas.
 #FUNCIONES:
+
+#Menu Gestion de usuarios
+function fun_gen_usu (){
+	echo -e "${CIAN}1.${ND} Metadatos de los ficheros de la ruta acutal."
+	echo -e "${CIAN}2.${ND} Metadatos de la ruta especifica."
+	echo -e "${CIAN}3.${ND} Metadatos de fichero especifico."
+	echo -e "${CIAN}4.${ND} The Harvester."
+	echo -e "${CIAN}5.${ND} Volver atras."
+}
+
 #Menu exiftool
 function fun_exif (){
 	clear
@@ -193,6 +203,11 @@ do
 		
 		6) #Gestion de usuarios
 			echo "6"
+			fun_gen_menu "Gestion de usuarios"
+			fun_menu_
+
+
+
 			# Confirmacion para avanzar
 			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
 		;;
