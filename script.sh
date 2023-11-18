@@ -5,12 +5,13 @@
 #FUNCIONES:
 
 #Menu Gestion de usuarios
-function fun_gen_usu (){
-	echo -e "${CIAN}1.${ND} Metadatos de los ficheros de la ruta acutal."
-	echo -e "${CIAN}2.${ND} Metadatos de la ruta especifica."
-	echo -e "${CIAN}3.${ND} Metadatos de fichero especifico."
-	echo -e "${CIAN}4.${ND} The Harvester."
-	echo -e "${CIAN}5.${ND} Volver atras."
+function fun_menu_usu (){
+	clear
+	fun_gen_menu "Gestion de usuarios"
+	echo -e "${CIAN}1.${ND} Crear usuario."
+	echo -e "${CIAN}1.${ND} Eliminar usuario."
+	echo -e "${CIAN}3.${ND} Editar Usuario."
+	echo -e "${ROJO}4.${ND} Volver atras."
 }
 
 #Menu exiftool
@@ -29,7 +30,7 @@ function fun_exif (){
 #Menu general
 function fun_gen_menu (){
 	echo -e "${AZUL}========================${ND}"
-	echo -e "----- ${AZUL}$1${ND} ------"
+	echo -e "----- ${ROJO}$1${ND} ------"
 	echo -e "${AZUL}========================${ND}"
 }
 
@@ -168,33 +169,37 @@ do
 					read -p $'\e[33mElige una opcion\e[0m: ' i_exif
 				done
 				case $i_exif in
-				1)
-										
-					# Confirmacion para avanzar
-					read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
-				;;
-				2)
-					echo "2"
-					# Confirmacion para avanzar
-					read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
-				;;
-				3)
-					echo "3"
-					# Confirmacion para avanzar
-					read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
-				;;
-				4)
-					echo "4"
-					read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					1)
+						echo "Mostrando los metadatos de los archivos de la ruta actual:"
+							exiftool *			
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					2)
 					
-				;;
-				5)
-					break
-				;;
-		    *)
-		        echo "ERROR: OPCION NO CONTEMPLADA"
-          	sleep 0.5
-		    ;;
+						read -p "ESpecifique la ruta de la cual quiera obterner los metadatos: " ruta_metadatos
+						exiftool $ruta_metadatos/ *			
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					3)
+						read -p "ESpecifique la ruta de la cual quiera obterner los metadatos: " fichero_metadatos
+						exiftool $fichero_metadatos			
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					4)
+						echo "4"
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+						
+					;;
+					5)
+						break
+					;;
+					*)
+						echo "ERROR: OPCION NO CONTEMPLADA"
+					sleep 0.5
+					;;
 				esac
 			done
 			# Confirmacion para avanzar
@@ -202,11 +207,42 @@ do
 		;;
 		
 		6) #Gestion de usuarios
-			echo "6"
-			fun_gen_menu "Gestion de usuarios"
-			fun_menu_
-
-
+			i_usu=0
+			while true
+			do
+				fun_menu_usu
+				read -p $'\e[33mElige una opcion\e[0m: ' i_usu
+				
+				while [[ $i_usu -lt 1 && $i_usu -gt 4 ]]
+				do
+					echo ""
+				done
+				
+				case $i_usu in
+					1)
+						echo "crea usuario"					
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					2)
+						echo "Elimina usuario"
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					3)
+						echo "modifica usuario"
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					4)
+						break
+					;;
+					*)
+						echo "ERROR: OPCION NO CONTEMPLADA"
+						sleep 0.5
+					;;
+				esac
+			done
 
 			# Confirmacion para avanzar
 			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
