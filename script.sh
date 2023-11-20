@@ -3,14 +3,40 @@
 #bash-version:5.2.15(1)-release
 #Scrip para la ejecucion de diferentes herramientas.
 #FUNCIONES:
-
+#Control de nombre de usuarios
+function fun_ctrl_usu(){
+	local nombre=$1
+	while true; do
+		#Comprueba si usuario existe
+		if id "$nombre" >/dev/null 2>&1; then
+			echo $nombre
+			break
+		else
+			read nombre
+		fi
+	done
+}
+#Menu Modificacion de usuarios
+function fun_menu_usu_mod(){
+	clear
+	fun_gen_menu "Modificar usuarios"
+	echo -e "${CIAN}1.${ND} Nombre de usuario."	
+	echo -e "${CIAN}2.${ND} Cambiar Home."
+	echo -e "${CIAN}3.${ND} Fecha de caducidad."
+	echo -e "${CIAN}4.${ND} Añadir o eliminar grupos."	
+	echo -e "${CIAN}5.${ND} Contrasena."	
+	echo -e "${CIAN}6.${ND} Shell."	
+	echo -e "${CIAN}7.${ND} Bloquear."	
+	echo -e "${CIAN}8.${ND} Desbloquear."	
+	echo -e "${ROJO}9.${ND} Volver atras."
+}
 #Menu Gestion de usuarios
 function fun_menu_usu (){
 	clear
 	fun_gen_menu "Gestion de usuarios"
 	echo -e "${CIAN}1.${ND} Crear usuario."
-	echo -e "${CIAN}1.${ND} Eliminar usuario."
-	echo -e "${CIAN}3.${ND} Editar Usuario."
+	echo -e "${CIAN}2.${ND} Editar Usuario."
+	echo -e "${CIAN}3.${ND} Eliminar usuario."	
 	echo -e "${ROJO}4.${ND} Volver atras."
 }
 
@@ -220,17 +246,93 @@ do
 				
 				case $i_usu in
 					1)
-						echo "crea usuario"					
-						# Confirmacion para avanzar
+						echo "crea usuario"
+						read -p "Introduzca el nombre de usuario: " nombreusuario
+						read -p "Introduzca la contrasenia: " contrasena
+						contrasena=$(openssl passwd $contrasena)
+						echo $contrasena
+						sudo useradd $nombreusuario --password $contrasena					
+						# Confirmacion para avanzarsudo
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					2)
-						echo "Elimina usuario"
+						echo "modifica usuario"
+						i_usu_mod=0
+						while true
+						do 
+							fun_menu_usu_mod
+							read -p $'\e[33mElige una opcion\e[0m: ' i_usu_mod
+				
+							while [[ $i_usu_mod -lt 1 && $i_usu_mod -gt 4 ]]
+							do
+							echo ""
+							done
+							
+							case $i_usu_mod in
+							1)
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreviejo
+								
+								nombreviejo=$(fun_ctrl_usu "$nombreviejo")
+								read -p "Introduzca el nuevo nombre de usuario: " nuevonombre
+								nuevonombre=$(fun_ctrl_usu "$nuevonombre")
+								sudo usermod -l $nuevonombre $nombreviejo
+								echo "NOMBRE DE USUARIO ACTUALIZADO"
+				
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							2)
+								echo -e "${CIAN}2.${ND} Cambiar Home."
+								
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							3)
+								echo -e "${CIAN}3.${ND} Fecha de caducidad."
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							4)
+								echo -e "${CIAN}4.${ND} Añadir o eliminar grupos."	
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							5)
+								echo -e "${CIAN}5.${ND} Contrasena."
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							6)
+								echo -e "${CIAN}6.${ND} Shell."	
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							7)
+								echo -e "${CIAN}7.${ND} Bloquear."	
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							8)
+								echo -e "${CIAN}8.${ND} Desbloquear."	
+								# Confirmacion para avanzarsudo
+								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+							;;
+							9)
+								break
+							;;
+							*)
+								echo "ERROR: OPCION NO CONTEMPLADA"
+								sleep 0.5
+							;;
+							esac
+						done
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					3)
-						echo "modifica usuario"
+						echo "Elimina usuario"
+						read -p "Introduzca el nombre de usuario que desea eliminar: " nombreusuario
+						sudo userdel $nombreusuario
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
@@ -242,10 +344,7 @@ do
 						sleep 0.5
 					;;
 				esac
-			done
-
-			# Confirmacion para avanzar
-			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
+			done		
 		;;
 		
 		7) #Ataque con metasploit
