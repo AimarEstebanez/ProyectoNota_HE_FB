@@ -284,36 +284,78 @@ do
 							2)
 								echo -e "${CIAN}2.${ND} Cambiar Home."
 								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
+								read -p "Introduzca la ruta del nuevo home del usuario: " nuevohome
+								until [[ -n $nuevohome && -d $nuevohome ]]; do
+									read -p "Introduzca la ruta del nuevo home del usuario: " nuevohome
+								done
+								
+								sudo usermod --home $nuevohome $nombreusu
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							3)
 								echo -e "${CIAN}3.${ND} Fecha de caducidad."
+								
+								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
+								#YYYY-MM-DD
+								read -p "Introduzca la nueva fecha de caducidad en formato YYYY-MM-DD: "
+								sudo usermod --expiredate $fechacad $nombreusu
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							4)
 								echo -e "${CIAN}4.${ND} Añadir o eliminar grupos."	
+								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
+								read -p "Introduzca los grupos a los que quiere añadir o eliminar: "
+								sudo usermods $grupos $nombreusu
+								
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							5)
 								echo -e "${CIAN}5.${ND} Contrasena."
+								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
+								
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							6)
 								echo -e "${CIAN}6.${ND} Shell."	
+								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							7)
 								echo -e "${CIAN}7.${ND} Bloquear."	
+								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
+								
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							8)
 								echo -e "${CIAN}8.${ND} Desbloquear."	
+								
+								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								nombreusu=$(fun_ctrl_usu "$nombreusu")
+								
 								# Confirmacion para avanzarsudo
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
@@ -326,8 +368,6 @@ do
 							;;
 							esac
 						done
-						# Confirmacion para avanzar
-						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					3)
 						echo "Elimina usuario"
