@@ -19,6 +19,17 @@ function fun_ctrl_usu(){
 	done
 }
 
+#Menu diccionario
+function fun_menu_dic(){
+	echo 			"Eleccion de Diccionario"
+	echo -e "${AZUL}========================${ND}"
+	echo -e "${CIAN}1.${ND} password.lst en /usr/share/john."
+	echo -e "${CIAN}2.${ND} rockyou en /home/$1."
+	echo -e "${CIAN}3.${ND} Otro en otra localizacion."
+	echo -e "${ROJO}4.Volver atras.${ND} "
+	echo -e "${AZUL}========================${ND}"
+}
+
 #Menu Modificacion de usuarios
 function fun_menu_usu_mod(){
 	clear
@@ -42,6 +53,7 @@ function fun_menu_usu (){
 	echo -e "${CIAN}2.${ND} Editar Usuario."
 	echo -e "${CIAN}3.${ND} Eliminar usuario."	
 	echo -e "${ROJO}4.${ND} Volver atras."
+	echo -e "${AZUL}========================${ND}"
 }
 
 #Menu exiftool
@@ -139,6 +151,7 @@ do
 		
 		3) #Ataque de diccionario
 			#Añadir Menu Diccionario
+			clear
 			fun_gen_menu "ATAQUE DE DICCIONARIO "
 			
 			read -p "Introduzca el HASH: " vhash
@@ -156,8 +169,55 @@ do
 				read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
 			done 
 			
+			i_dic=0
+			while true
+			do
+				clear
+				fun_gen_menu "ATAQUE DE DICCIONARIO"
+				fun_menu_dic "$(whoami)"
+				read -p "Indique el diccionario que desea emplear: " i_dic
+				
+				case $i_dic in 
+					1)#Password.lst
+						if [[ -e /usr/share/john/password.lst ]]
+						then
+							pathdiccionario="/usr/share/john/password.lst"
+							break
+						else
+							echo "ERROR: No se encuentra el diccionario"
+							pause 0.5
+							break
+						fi
+					;;
+					2)#rockyou.txt
+						if [[ -e /home/$(whoami)/rockyou.txt ]]
+						then
+							pathdiccionario="/home/$(whoami)/rockyou.txt"
+							break
+						else
+							echo "ERROR: No se encuentra el diccionario"
+							pause 0.5
+							break
+						fi
+					;;
+					3)#especifica la ruta
+						read -p "Introduzca la ruta del diccionario: " pathdiccionario
+						until [[ -e $pathdiccionario ]]; do
+							read -p "Introduzca la ruta del diccionario: " pathdiccionario
+						done
+						break
+					;;
+					4)
+						break
+					;;
+					*)
+						echo "Opcion no valia"
+						sleep 0.5
+					;;
+				esac
+			done
 			#Ataque de diccionario
-			john --wordlist=/usr/share/wordlists/rockyou.txt --format=Raw-$formato temp.txt 2>&1>/dev/null
+			john --wordlist=$pathdiccionario --format=Raw-$formato temp.txt 2>&1>/dev/null
 			resultado=$(john --show temp.txt --format=Raw-$formato | cut -d ":" -f2) 
 			
 			#Resultado
@@ -165,6 +225,8 @@ do
 			echo "La contrasenia es: $resultado"
 			rm -f temp.txt 2>&1>/dev/null
 			#827ccb0eea8a706c4c34a16891f84e7b
+			#311020666a5776c57d265ace682dc46d
+
 			
 			# Confirmacion para avanzar
 			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
@@ -176,20 +238,21 @@ do
 			read -p "Especifique el objetivo: " objetivo_nmap
 			clear
 			
-			#Llamads a menus
+			#Llamada a menu
 			fun_gen_menu "Fingerprint"
-			fun_finger
-			
+						
 			#Control varible parametros
-			read -p "Introduzca el algoritmo [ sX, sC, sV  o sn ]: " parametros
-			while [[ "$parametros" != "sX" && "$parametros" != "sC" && "$parametros" != "sV" && "$parametros" != "sn" ]]
+			read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
+			while [[ "$parametros" != "sX" && "$parametros" != "sC" && "$parametros" != "sV" && "$parametros" != "sN" ]]
 			do
 				echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
-				read -p "Introduzca el algoritmo [ sX, sC, sV  o sn ]: " parametros
+				read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
 			done 
 			
+			echo "Puertos abiertos de la IP: $objetivo_nmap"
+			echo "PORT     STATE SERVICE      VERSION"
 			#Ejecucion comando nmap
-			sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ | cut -d " " -f1,2,4
+			sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ 
 			
 			# Confirmacion para avanzar
 			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
@@ -237,7 +300,7 @@ do
 					;;
 					*)
 						echo "ERROR: OPCION NO CONTEMPLADA"
-					sleep 0.5
+						sleep 0.5
 					;;
 				esac
 			done	
