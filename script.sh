@@ -4,6 +4,7 @@
 #Scrip para la ejecucion de diferentes herramientas.
 #FUNCIONES:
 
+
 #Control de nombre de usuarios
 #Problema, no muestra nada si el usuario no existe, si hago un echo lo devuelve en el return
 function fun_ctrl_usu(){
@@ -17,6 +18,77 @@ function fun_ctrl_usu(){
 			read nombre
 		fi
 	done
+}
+
+#Funcion eleccion de diccionario
+function fun_elec_dicc(){
+	i_dic=0
+			while true
+			do
+				clear
+				fun_gen_menu "ATAQUE DE DICCIONARIO"
+				fun_menu_dic "$(whoami)"
+				read -p "Indique el diccionario que desea emplear: " i_dic
+				
+				case $i_dic in 
+					1)#Password.lst
+						if [[ -e /usr/share/john/password.lst ]]
+						then
+							pathdiccionario="/usr/share/john/password.lst"
+							break
+						else
+							echo "ERROR: No se encuentra el diccionario"
+							pause 0.5
+							break
+						fi
+					;;
+					2)#rockyou.txt
+						if [[ -e /home/$(whoami)/rockyou.txt ]]
+						then
+							pathdiccionario="/home/$(whoami)/rockyou.txt"
+							break
+						else
+							echo "ERROR: No se encuentra el diccionario"
+							pause 0.5
+							break
+						fi
+					;;
+					3)#especifica la ruta
+						read -p "Introduzca la ruta del diccionario: " pathdiccionario
+						until [[ -e $pathdiccionario ]]; do
+							read -p "Introduzca la ruta del diccionario: " pathdiccionario
+						done
+						break
+					;;
+					4)
+						break
+					;;
+					*)
+						echo "Opcion no valia"
+						sleep 0.5
+					;;
+				esac
+			done
+			return $pathdiccionario 2>/dev/null
+	}
+
+#Menu busqueda de ficheros
+function fun_menu_fich(){
+	echo -e "${CIAN}1.${ND}Busqueda con FIND."
+	echo -e "${CIAN}2.${ND}Busqueda con LOCATE."
+	echo -e "${CIAN}3.${ND}Busqueda de ejecutable con WHICH."
+	echo -e "${CIAN}4.${ND}Busqueda de ejecutable con WHEREIS."
+	echo -e "${ROJO}5.Volver atras.${ND} "
+	echo -e "${AZUL}========================${ND}"
+}
+
+#Menu ataque de diccionaro
+function fun_menu_atac(){
+	echo -e "${CIAN}1.${ND}Crear HASH."
+	echo -e "${CIAN}2.${ND}Ataque de diccionario con John The Ripper."
+	echo -e "${CIAN}3.${ND}Ataque de diccionario con Hascat."
+	echo -e "${ROJO}4.Volver atras.${ND} "
+	echo -e "${AZUL}========================${ND}"
 }
 
 #Menu diccionario
@@ -45,6 +117,7 @@ function fun_menu_usu_mod(){
 	echo -e "${ROJO}9.${ND} Volver atras."
 	echo -e "${AZUL}========================${ND}"
 }
+
 #Menu Gestion de usuarios
 function fun_menu_usu (){
 	clear
@@ -117,11 +190,6 @@ do
 	
 	#Bucle control valor variable i dentro de parametros
 		read -p $'\e[33mElige una opcion\e[0m: ' i
-	while [[ $i -lt 1 && $i -gt 8 ]]
-	do 
-		/dev/null
-	done
-	
 	case $i in
 		1) #Saludar
 			# Elige una de las dos condiciones de manera aleatoria	
@@ -135,103 +203,121 @@ do
 			# Confirmacion para avanzar
 			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
 		;;
-		
 		2) #Busqueda de ficheros
-			
-			#Busqueda con find
-			echo "BUSCANDO CON FIND: "
-			read -p "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
-			find / -name *$nombrefichero* 2>/dev/null
-			
-			#Busqueda con ...
-			
-			# Confirmacion para avanzar
-			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
+			i_fich=0
+			while true
+			do 
+				clear
+				fun_gen_menu "Busqueda de ficheros"
+				fun_menu_fich
+				read -p $'\e[33mElige una opcion\e[0m: ' i_fich
+				case $i_fich in
+					1)#Busqueda con find
+						echo "BUSCANDO CON FIND: "
+						read -p "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
+						find / -name *$nombrefichero* 2>/dev/null
+						
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
+					;;
+					2)#Busqueda con locate
+						echo "BUSCANDO CON LOCATE:"
+						read -p "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
+						sudo updatedb 2>/dev/null
+						locate -i $nombrefichero 2>/dev/null
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
+					;;
+					3)#Busqueda Ejecutable con which 
+						echo "BUSCANDO EJECUTABLE CON WHICH:"
+						read -p "Intrduzca el nombre del ejecutable que desea encontrar: " nombrefichero
+						sudo which $nombrefichero 2>/dev/null
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
+					;;
+					4)#Busqueda con whereis
+						echo "BUSCANDO EJECUTABLE CON WHEREIS:"
+						read -p "Intrduzca el nombre del ejecutable que desea encontrar: " nombrefichero
+						sudo whereis $nombrefichero 2>/dev/null
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
+					;;
+					5)
+						break
+					;;
+					*)
+						echo "Opcion no valida"
+						pause 0.5
+					;;
+				esac
+			done 		
 		;;
-		
 		3) #Ataque de diccionario
-			#Añadir Menu Diccionario
-			clear
-			fun_gen_menu "ATAQUE DE DICCIONARIO "
-			
-			read -p "Introduzca el HASH: " vhash
-			#Creacion de fichero temporal
-			echo $vhash > temp.txt  #Fichero temporal
-			
-			#Comprobacion del tipo de encriptacion
-			hashid -m $vhash
-			
-			#Control valor variable formato
-			read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
-			while [[ "$formato" != "md5" && "$formato" != "sha1" && "$formato" != "sha256" && "$formato" != "sha512" ]]
-			do
-				echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
-				read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
-			done 
-			
-			i_dic=0
+			i_ataque=0
 			while true
 			do
 				clear
-				fun_gen_menu "ATAQUE DE DICCIONARIO"
-				fun_menu_dic "$(whoami)"
-				read -p "Indique el diccionario que desea emplear: " i_dic
-				
-				case $i_dic in 
-					1)#Password.lst
-						if [[ -e /usr/share/john/password.lst ]]
-						then
-							pathdiccionario="/usr/share/john/password.lst"
-							break
-						else
-							echo "ERROR: No se encuentra el diccionario"
-							pause 0.5
-							break
-						fi
+				fun_gen_menu "ATAQUE DE DICCIONARIO "
+				fun_menu_atac 
+				read -p $'\e[33mElige una opcion\e[0m: ' i_ataque
+				case $i_ataque in
+					1)#Creacion del hash
+						read -p "Introduzca la cadena a HASH-ar: " cadena
+						echo -n $cadena | md5sum | awk '{print $1}' > temp.txt  #Fichero temporal
+						cat temp.txt
+						vhash=$(cat temp.txt) 		
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
-					2)#rockyou.txt
-						if [[ -e /home/$(whoami)/rockyou.txt ]]
-						then
-							pathdiccionario="/home/$(whoami)/rockyou.txt"
-							break
-						else
-							echo "ERROR: No se encuentra el diccionario"
-							pause 0.5
-							break
-						fi
+					2)#Ataque con JOHN 
+						#Comprobacion del tipo de encriptacion
+						hashid -m $vhash
+						#Control valor variable formato
+						read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
+						while [[ "$formato" != "md5" && "$formato" != "sha1" && "$formato" != "sha256" && "$formato" != "sha512" ]]
+						do
+							echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
+							read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
+						done 
+						
+						fun_elec_dicc 
+						
+						#Ataque de diccionario
+						john --wordlist=$pathdiccionario --format=Raw-$formato temp.txt 2>&1>/dev/null
+						resultado=$(john --show temp.txt --format=Raw-$formato | cut -d ":" -f2)
+						
+						#Resultado
+						echo "La contrasenia es: $resultado" > $(date '+%F-%H-%S')_resultado.txt
+						echo "La contrasenia es: $resultado"
+					
+						
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla		
 					;;
-					3)#especifica la ruta
-						read -p "Introduzca la ruta del diccionario: " pathdiccionario
-						until [[ -e $pathdiccionario ]]; do
-							read -p "Introduzca la ruta del diccionario: " pathdiccionario
-						done
-						break
+					3)#Ataque con HASCAT
+					
+						fun_elec_dicc 
+						
+						hashcat -m 0 -a 0 temp.txt $pathdiccionario
+						
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
 					4)
 						break
 					;;
 					*)
-						echo "Opcion no valia"
-						sleep 0.5
+						echo "Opcion no valida"
+						pause 0.5
 					;;
+					
 				esac
 			done
-			#Ataque de diccionario
-			john --wordlist=$pathdiccionario --format=Raw-$formato temp.txt 2>&1>/dev/null
-			resultado=$(john --show temp.txt --format=Raw-$formato | cut -d ":" -f2) 
-			
-			#Resultado
-			echo "La contrasenia es: $resultado" > $(date '+%F-%H-%S')_resultado.txt
-			echo "La contrasenia es: $resultado"
 			rm -f temp.txt 2>&1>/dev/null
 			#827ccb0eea8a706c4c34a16891f84e7b
 			#311020666a5776c57d265ace682dc46d
-
-			
-			# Confirmacion para avanzar
-			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
+			#8afa847f50a716e64932d995c8e7435a
 		;;
-		
 		4) #Fingerprint
 			#Menu fingerprint
 			fun_gen_menu "Fingerprint"
@@ -263,13 +349,7 @@ do
 			while true
 			do
 				fun_exif
-				#While para eleccion de opciones
 				read -p $'\e[33mElige una opcion\e[0m: ' i_exif
-				while [[ $i_exif -lt 1 && $i_exif -gt 4 ]]
-				do
-					echo "ERROR: OPCION NO CONTEMPLADA"
-					read -p $'\e[33mElige una opcion\e[0m: ' i_exif
-				done
 				#Case para las funcionalidades del menu
 				case $i_exif in
 					1)#Metadatos de la ruta actual
@@ -293,7 +373,6 @@ do
 					4)#TheHarvester
 						echo "4"
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
-						
 					;;
 					5)#Salida del submenu
 						break
@@ -305,7 +384,6 @@ do
 				esac
 			done	
 		;;
-		
 		6) #Gestion de usuarios
 			#While para el submenu de usuarios
 			i_usu=0
@@ -313,13 +391,6 @@ do
 			do
 				fun_menu_usu
 				read -p $'\e[33mElige una opcion\e[0m: ' i_usu
-				
-				#Control de opciones
-				while [[ $i_usu -lt 1 && $i_usu -gt 4 ]]
-				do
-					/dev/null
-				done
-				
 				case $i_usu in
 					1)#Creacion de usuario
 						fun_gen_menu "Ceracion de usuario"
@@ -348,7 +419,6 @@ do
 						do 
 							fun_menu_usu_mod
 							read -p $'\e[33mElige una opcion\e[0m: ' i_usu_mod
-							
 							case $i_usu_mod in
 							1) #Cambio de nombre 
 								read -p "Introduzca el nombre del usuario que desea modificar: " nombreviejo
