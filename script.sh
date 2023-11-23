@@ -382,10 +382,12 @@ do
 						done 
 						
 						echo "Puertos abiertos de la IP: $objetivo_nmap"
-						echo "PORT     STATE SERVICE      VERSION"
+						ficheronmap=$(date '+%F-%H-%S')nmap__resultado.txt
+						echo "PORT     STATE SERVICE      VERSION" > $ficheronmap
 						#Ejecucion comando nmap
-						sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ 
-						
+						#sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ >> $ficheronmap
+						sudo nmap -$parametros $objetivo_nmap | grep open >> $ficheronmap
+						cat $ficheronmap
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
