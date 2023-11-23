@@ -1,0 +1,41 @@
+FOTPRINTING
+
+i_metadatos=0
+while true
+do
+	echo -e "${AZUL}========================${ND}"
+	echo -e "${CIAN}1.${ND}Consultar metadatos."
+	echo -e "${CIAN}2.${ND}Modificar metadatos."
+	echo -e "${AZUL}========================${ND}"
+	read -p "Elije una opcion" i_metadatos 
+	case i_metadatos in
+		1)
+			#CONSULTAR METADATOS
+		;;
+		2)
+			#EDITAR METADATOS
+			i_editar=0
+			while true
+			do
+				read -p "Elija una opcion" i_editar
+				case i_editar in
+					1)#Consultar metadatos
+						#meter lo anterior
+					;;	
+					2)#Modificar metadatos
+					  #
+					;;
+					*)
+						echo "Opcion no valida"
+						pause 0.5
+					;;
+				esac
+			done
+		;;
+		*)
+			echo "OPCION NO VALIDA"
+			pause 0.5
+		;;
+	esac
+	
+done

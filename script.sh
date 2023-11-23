@@ -15,7 +15,7 @@ function fun_ctrl_usu(){
 			echo $nombre
 			break
 		else
-			read nombre
+			read -p "ERROR: el usuario no existe, introduzca uno nuevo: " nombre
 		fi
 	done
 }
@@ -296,10 +296,10 @@ do
 					;;
 					3)#Ataque con HASCAT
 					
-						fun_elec_dicc 
+						fun_elec_dicc
 						
-						hashcat -m 0 -a 0 temp.txt $pathdiccionario
-						
+						hashcat -m 0 -a 0 temp.txt $pathdiccionario |grep $vhash| awk -F: '{print "La contrasenia es: " $2}'| grep -v '^$'| head -n 1 > resultado.txt
+						cat resultado.txt
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
