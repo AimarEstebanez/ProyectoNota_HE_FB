@@ -38,8 +38,8 @@ function fun_elec_dicc(){
 			while true
 			do
 				clear
-				fun_gen_menu "ATAQUE DE DICCIONARIO"
-				fun_menu_dic "$(whoami)"
+				fun_menu_general "ATAQUE DE DICCIONARIO"
+				fun_menu_fingerprinting_dic "$(whoami)"
 				read -p "Indique el diccionario que desea emplear: " i_dic
 				
 				case $i_dic in 
@@ -85,7 +85,7 @@ function fun_elec_dicc(){
 	}
 
 #Menu busqueda de ficheros
-function fun_menu_fich(){
+function fun_menu_busqueda(){
 	echo -e "${CIAN}1.${ND}Busqueda con FIND."
 	echo -e "${CIAN}2.${ND}Busqueda con LOCATE."
 	echo -e "${CIAN}3.${ND}Busqueda de ejecutable con WHICH."
@@ -95,7 +95,7 @@ function fun_menu_fich(){
 }
 
 #Menu ataque de diccionaro
-function fun_menu_atac(){
+function fun_menu_fingerprinting_atac(){
 	echo -e "${CIAN}1.${ND}Crear HASH."
 	echo -e "${CIAN}2.${ND}Ataque de diccionario con John The Ripper."
 	echo -e "${CIAN}3.${ND}Ataque de diccionario con Hascat."
@@ -104,7 +104,7 @@ function fun_menu_atac(){
 }
 
 #Menu diccionario
-function fun_menu_dic(){
+function fun_menu_fingerprinting_dic(){
 	echo 			"Eleccion de Diccionario"
 	echo -e "${AZUL}========================${ND}"
 	echo -e "${CIAN}1.${ND} password.lst en /usr/share/john."
@@ -115,9 +115,9 @@ function fun_menu_dic(){
 }
 
 #Menu Modificacion de usuarios
-function fun_menu_usu_mod(){
+function fun_menu_usr_mod(){
 	clear
-	fun_gen_menu "Modificar usuarios"
+	fun_menu_general "Modificar usuarios"
 	echo -e "${CIAN}1.${ND} Nombre de usuario."	
 	echo -e "${CIAN}2.${ND} Cambiar Home."
 	echo -e "${CIAN}3.${ND} Fecha de caducidad."
@@ -131,9 +131,9 @@ function fun_menu_usu_mod(){
 }
 
 #Menu Gestion de usuarios
-function fun_menu_usu (){
+function fun_menu_usr (){
 	clear
-	fun_gen_menu "Gestion de usuarios"
+	fun_menu_general "Gestion de usuarios"
 	echo -e "${CIAN}1.${ND} Crear usuario."
 	echo -e "${CIAN}2.${ND} Editar Usuario."
 	echo -e "${CIAN}3.${ND} Eliminar usuario."	
@@ -141,17 +141,26 @@ function fun_menu_usu (){
 	echo -e "${AZUL}========================${ND}"
 }
 
+#Menu Fingerprint
+function fun_menu_fingerprinting(){
+	echo -e "${CIAN}1.${ND}Herramienta nmap."
+	echo -e "${CIAN}2.${ND}Iniciar OpenVas."
+	echo -e "${CIAN}3.${ND}Detener OpenVas."
+	echo -e "${ROJO}4.Volver atras.${ND}"
+	echo -e "${AZUL}========================${ND}"
+	}
 #Menu metadatos
-function fun_menu_foot(){
+function fun_menu_footprintin(){
 	
 	echo -e "${CIAN}1.${ND}Consultar metadatos."
 	echo -e "${CIAN}2.${ND}Modificar metadatos."
+	echo -e "${CIAN}3.${ND}The Harvester."
+	echo -e "${ROJO}4.Volver atras.${ND}"
 	echo -e "${AZUL}========================${ND}"
-	read -p $'\e[33mElige una opcion\e[0m: ' i_metadatos 
 }
 
 #Menu edicion metadatos
-function fun_menu_meta_edit(){
+function fun_menu_metasploit_edit(){
 	echo -e "${CIAN}1.${ND}Eliminar TODOS los metadatos."
 	echo -e "${CIAN}2.${ND}Modificar CREADOR."
 	echo -e "${CIAN}3.${ND}Modificar AUTOR."
@@ -163,7 +172,7 @@ function fun_menu_meta_edit(){
 }
 
 #Menu exiftool
-function fun_menu_meta_show (){
+function fun_menu_metasploit_show (){
 	echo -e "${CIAN}1.${ND} Metadatos de los ficheros de la ruta acutal."
 	echo -e "${CIAN}2.${ND} Metadatos de la ruta especifica."
 	echo -e "${CIAN}3.${ND} Metadatos de fichero especifico."
@@ -172,16 +181,16 @@ function fun_menu_meta_show (){
 	echo -e "${AZUL}========================${ND}"
 }
 
-#Menu general
-function fun_gen_menu (){
+#Menu general 
+function fun_menu_general (){
 	clear
 	echo -e "${AZUL}========================${ND}"
 	echo -e "----- ${ROJO}$1${ND} ------"
 	echo -e "${AZUL}========================${ND}"
 }
 
-#Menu principal
- function fun_menu (){	 
+#Menu principal 
+ function fun_menu_principal (){	 
 	clear
 	#Parte bonita menu
 	figlet -f Double menu
@@ -217,7 +226,7 @@ ND='\033[0m' # nada
 i=0
 while true
 do
-	fun_menu
+	fun_menu_principal
 	
 	#Bucle control valor variable i dentro de parametros
 		read -p $'\e[33mElige una opcion\e[0m: ' i
@@ -239,8 +248,8 @@ do
 			while true
 			do 
 				clear
-				fun_gen_menu "Busqueda de ficheros"
-				fun_menu_fich
+				fun_menu_general "Busqueda de ficheros"
+				fun_menu_busqueda
 				read -p $'\e[33mElige una opcion\e[0m: ' i_fich
 				case $i_fich in
 					1)#Busqueda con find
@@ -288,8 +297,8 @@ do
 			while true
 			do
 				clear
-				fun_gen_menu "ATAQUE DE DICCIONARIO "
-				fun_menu_atac 
+				fun_menu_general "ATAQUE DE DICCIONARIO "
+				fun_menu_fingerprinting_atac 
 				read -p $'\e[33mElige una opcion\e[0m: ' i_ataque
 				case $i_ataque in
 					1)#Creacion del hash
@@ -350,36 +359,66 @@ do
 			#8afa847f50a716e64932d995c8e7435a
 		;;
 		4) #Fingerprint
-			#Menu fingerprint
-			fun_gen_menu "Fingerprint"
-			read -p "Especifique el objetivo: " objetivo_nmap
-			clear
 			
-			#Llamada a menu
-			fun_gen_menu "Fingerprint"
-						
-			#Control varible parametros
-			read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
-			while [[ "$parametros" != "sX" && "$parametros" != "sC" && "$parametros" != "sV" && "$parametros" != "sN" ]]
+			i_finger=0
+			while true
 			do
-				echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
-				read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
-			done 
-			
-			echo "Puertos abiertos de la IP: $objetivo_nmap"
-			echo "PORT     STATE SERVICE      VERSION"
-			#Ejecucion comando nmap
-			sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ 
-			
-			# Confirmacion para avanzar
-			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
+				clear
+				#Menu fingerprint
+				fun_menu_general "Fingerprint"
+				fun_menu_fingerprinting
+				read -p $'\e[33mElige una opcion\e[0m: ' i_finger 
+				
+				case $i_finger in
+					1)#NMAP
+						fun_menu_general "NMAP"
+						read -p "Especifique el objetivo: " objetivo_nmap
+						#Control varible parametros
+						read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
+						while [[ "$parametros" != "sX" && "$parametros" != "sC" && "$parametros" != "sV" && "$parametros" != "sN" ]]
+						do
+							echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
+							read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
+						done 
+						
+						echo "Puertos abiertos de la IP: $objetivo_nmap"
+						echo "PORT     STATE SERVICE      VERSION"
+						#Ejecucion comando nmap
+						sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ 
+						
+						# Confirmacion para avanzar
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
+					;;
+					2)#Iniciar OpenVas
+						fun_menu_general "OPENVAS"
+						sudo gvm-start 
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					3)#Detener OpenVas
+						sudo gvm-stop 2>&1>/dev/null
+						echo "Openvas detenido"
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					4)
+						break
+					;;
+					*)
+						echo "Opcion no valida"
+						seleep 0.5
+					;;
+				esac
+			done
+						
+									
+					
 		;;
 		5) #Footprinting			
 			i_metadatos=0
 			while true
 			do
-				fun_gen_menu "FOOTPRINTING"
-				fun_menu_foot
+				fun_menu_general "FOOTPRINTING"
+				fun_menu_footprintin
+				read -p $'\e[33mElige una opcion\e[0m: ' i_metadatos 
 				case $i_metadatos in
 					1)
 						echo "CONSULTAR METADATOS"
@@ -387,8 +426,8 @@ do
 						i_exif=0
 						while true
 						do
-							fun_gen_menu "FOOTPRINTING"
-							fun_menu_meta_show
+							fun_menu_general "FOOTPRINTING"
+							fun_menu_metasploit_show
 							read -p $'\e[33mElige una opcion\e[0m: ' i_exif
 							#Case para las funcionalidades del menu
 							case $i_exif in
@@ -429,8 +468,8 @@ do
 						i_editar=0
 						while true
 						do
-							fun_gen_menu "FOOTPRINTING"
-							fun_menu_meta_edit
+							fun_menu_general "FOOTPRINTING"
+							fun_menu_metasploit_edit
 							case $i_editar in
 								1)#Eliminar todos
 									
@@ -472,6 +511,26 @@ do
 							esac
 						done
 					;;
+					3)#THE HARVESTER
+						fun_menu_general "THE HARVESTER"
+						
+						read -p "Introduzca el dominio objetivo: " dominioObjetivo
+						
+						read -p "Introduzca el algoritmo [ bing, brave, yahoo o duckduckgo ]: " buscador
+						while [[ "$buscador" != "bing" && "$buscador" != "brave" && "$buscador" != "yahoo" && "$buscador" != "duckduckgo" ]]
+						do
+							echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
+							read -p "Introduzca el algoritmo [ bing, brave, yahoo o duckduckgo ]: " buscador
+						done 
+						
+						read -p "Introduzca la cantidad de busquedas que desea hacer: " numeroBusquedas
+						
+						sudo theHarvester -d $dominioObjetivo -l $numeroBusquedas -b $buscador
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					4)
+						break
+					;;
 					*)
 						echo "OPCION NO VALIDA"
 						sleep 0.5
@@ -484,11 +543,11 @@ do
 			i_usu=0
 			while true
 			do
-				fun_menu_usu
+				fun_menu_usr
 				read -p $'\e[33mElige una opcion\e[0m: ' i_usu
 				case $i_usu in
 					1)#Creacion de usuario
-						fun_gen_menu "Ceracion de usuario"
+						fun_menu_general "Ceracion de usuario"
 					
 						read -p "Introduzca el nombre de usuario: " nombreusuario
 						read -sp "Introduzca la contrasenia: " contrasena
@@ -508,11 +567,11 @@ do
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					2)#Modificar usuario
-						fun_gen_menu "modifica usuario"
+						fun_menu_general "modifica usuario"
 						i_usu_mod=0
 						while true
 						do 
-							fun_menu_usu_mod
+							fun_menu_usr_mod
 							read -p $'\e[33mElige una opcion\e[0m: ' i_usu_mod
 							case $i_usu_mod in
 							1) #Cambio de nombre 
@@ -645,7 +704,7 @@ do
 						done
 					;;
 					3)#Eliminacion de usuario
-						fun_gen_menu "Eliminar usuario"
+						fun_menu_general "Eliminar usuario"
 						read -p "Introduzca el nombre de usuario que desea eliminar: " nombreusuario
 						
 						#Confirmacion de eliminacion de usuario
@@ -672,6 +731,8 @@ do
 		
 		7) #Ataque con metasploit
 			echo "7"
+			
+			
 			# Confirmacion para avanzar
 			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
 		;;
