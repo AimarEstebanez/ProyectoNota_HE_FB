@@ -111,6 +111,9 @@ function fun_elec_algoritmo() {
            formato="sha512"
            break
         ;;
+        5)
+		   break
+        ;;
         *)
           echo -e "${ROJO}ERROR: Opcion no valida${ND}"
           sleep 0.5
@@ -398,24 +401,17 @@ do
 						done 
 						
 						fun_elec_dicc 
-						
+						ficherohash=$(date '+%F-%H-%S')_hash__resultado.txt
 						#Ataque de diccionario
-						john --wordlist="$pathdiccionario" --format=Raw-"$formato" temp.txt 2>&1
-						resultado=$(john --show temp.txt --format=Raw-"$formato" | cut -d ":" -f2)
-						
-						#Resultado
-						echo "La contrasenia es: $resultado" > "$(date '+%F-%H-%S')"_resultado.txt
-						echo "La contrasenia es: $resultado"
-					
-						
+						john --wordlist="$pathdiccionario" --format=Raw-"$formato" temp.txt > /dev/null 2>&1 &
+						john --show temp.txt --format=Raw-"$formato" | awk -F ":" '/\?:/{print "La contraseña es:", $2}'| tee "$ficherohash"
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla		
 					;;
 					3)#Ataque con HASCAT
-					
 						fun_elec_dicc
-						
-						hashcat -m 0 -a 0 temp.txt "$pathdiccionario" |grep "$vhash"| awk -F: '{print "La contrasenia es: " $2}'| grep -v '^$'| head -n 1 > resultado.txt
+						#hashcat -m 0 -a 0 temp.txt "$pathdiccionario" |grep "$vhash"| awk -F: '{print "La contrasenia es: " $2}'| grep -v '^$'| head -n 1 > resultado.txt
+						hashcat -m 0 -a 0 temp.txt "$pathdiccionario" |grep "Password:" | awk '{print $2}' | tee "$ficherohash"
 						cat resultado.txt
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
@@ -455,11 +451,8 @@ do
 						
 						echo "Puertos abiertos de la IP: $objetivo_nmap"
 						ficheronmap=$(date '+%F-%H-%S')nmap__resultado.txt
-						echo "PORT     STATE SERVICE      VERSION" > "$ficheronmap"
 						#Ejecucion comando nmap
-						#sudo nmap -$parametros $objetivo_nmap | egrep -e [0-9][0-9]*/ >> $ficheronmap
-						sudo nmap -"$parametros" "$objetivo_nmap" | grep open >> "$ficheronmap"
-						cat "$ficheronmap"
+						sudo nmap -"$parametros" "$objetivo_nmap" |   awk 'NR>4 {buffer = buffer $0 ORS} END {split(buffer, lines, ORS); for (i=1; i<=length(lines)-3; i++) print lines[i]}' | tee $ficheronmap
 						# Confirmacion para avanzar
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla	
 					;;
@@ -789,14 +782,14 @@ do
 						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 					4)#Comprobacion de cambios de usuarios
-            fun_menu_general "Cambios en usuarios"
-            read -rp "Introduzca el nombre del usuario que desea comprobar: " nombreusu
-            nombreusu=$(fun_ctrl_usu "$nombreusu")
-            sudo cat /etc/passwd | grep "$nombreusu"
-            sudo cat /etc/shadow | grep "$nombreusu"
-            sudo cat /etc/group | grep "$nombreusu"
-            finger "$nombreusu"
-            read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+						fun_menu_general "Cambios en usuarios"
+						read -rp "Introduzca el nombre del usuario que desea comprobar: " nombreusu
+						nombreusu=$(fun_ctrl_usu "$nombreusu")
+						sudo cat /etc/passwd | grep "$nombreusu"
+						sudo cat /etc/shadow | grep "$nombreusu"
+						sudo cat /etc/group | grep "$nombreusu"
+						finger "$nombreusu"
+						read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
 					;;
 			    5)
 			      break
