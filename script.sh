@@ -232,7 +232,6 @@ function fun_footprinting() {
           fun_menu_metasploit_edit
           case $i_editar in
             1)#Eliminar todos
-
               fun_meta_edit
               exiftool -all= "$pathFichero"
               read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
@@ -712,7 +711,7 @@ function fun_menu_usr (){
 	echo -e "${CIAN}2.${ND} Editar Usuario."
 	echo -e "${CIAN}3.${ND} Eliminar usuario."
 	echo -e "${CIAN}4.${ND} Comprobar cambios de usuario."
-	echo -e "${ROJO}5.${ND} Volver atras."
+	echo -e "${ROJO}5.Volver atras.${ND}"
 	echo -e "${AZUL}========================${ND}"
 }
 #Menu Fingerprint
