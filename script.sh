@@ -106,12 +106,15 @@ function fun_ataque_dicci() {
       ;;
       3)#Ataque con HASCAT
         fun_elec_dicc
-        #hashcat -m 0 -a 0 temp.txt "$pathdiccionario" |grep "$vhash"| awk -F: '{print "La contrasenia es: " $2}'| grep -v '^$'| head -n 1 > resultado.txt
-        ficherohash=$(date '+%F-%H-%S')_hash__resultado.txt
-        hashcat -m 0 -a 0  temp.txt "$pathdiccionario" > /dev/null 2>&1 &
-        hashcat -m 0 -a 0  --show temp.txt | awk -F ":" '{print "La contraseña es:", $2}' | tee "$ficherohash"
-        # Confirmacion para avanzar
-        read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+        if [ -n "$pathdiccionario" ]; then
+            ficherohash=$(date '+%F-%H-%S')_hash__resultado.txt
+            hashcat -m 0 -a 0  temp.txt "$pathdiccionario" > /dev/null 2>&1 &
+            hashcat -m 0 -a 0  --show temp.txt | awk -F ":" '{print "La contraseña es:", $2}' | tee "$ficherohash"
+            # Confirmacion para avanzar
+            read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
+        else
+            break
+        fi
       ;;
       4)
         break
@@ -308,8 +311,8 @@ function fun_usr() {
         fun_menu_general "Ceracion de usuario"
         read -rp "Introduzca el nombre de usuario: " nombreusuario
         read -rsp "Introduzca la contrasenia: " contrasena
-        echo -e '\n'
         read -rsp "Repita la contrasenia: " contrasena2
+        echo -e '\n'
         #Comprobacion contrasenia
         if [ "$contrasena" = "$contrasena2" ]
         then
