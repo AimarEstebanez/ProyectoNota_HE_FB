@@ -213,11 +213,7 @@ function fun_footprinting() {
               # Confirmacion para avanzar
               read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
             ;;
-            4)#TheHarvester
-              echo "THEHARVESTER"
-              read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
-            ;;
-            5)#Salida del submenu
+            4)#Salida del submenu
               break
             ;;
             *)
@@ -752,8 +748,7 @@ function fun_menu_metasploit_show (){
 	echo -e "${CIAN}1.${ND} Metadatos de los ficheros de la ruta acutal."
 	echo -e "${CIAN}2.${ND} Metadatos de la ruta especifica."
 	echo -e "${CIAN}3.${ND} Metadatos de fichero especifico."
-	echo -e "${CIAN}4.${ND} The Harvester."
-	echo -e "${ROJO}5.Volver atras.${ND}"
+	echo -e "${ROJO}4.Volver atras.${ND}"
 	echo -e "${AZUL}========================${ND}"
 }
 #Menu general 
