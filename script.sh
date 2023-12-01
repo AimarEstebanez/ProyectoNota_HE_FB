@@ -303,7 +303,7 @@ function fun_usr() {
     read -rp $'\e[33mElige una opcion\e[0m: ' i_usu
     case $i_usu in
       1)#Creacion de usuario
-        fun_menu_general "Ceracion de usuario"
+        fun_menu_general "Creacion de usuario"
         read -rp "Introduzca el nombre de usuario: " nombreusuario
         read -rsp "Introduzca la contrasenia: " contrasena
         read -rsp "Repita la contrasenia: " contrasena2
@@ -711,7 +711,7 @@ function fun_menu_usr (){
 	echo -e "${CIAN}2.${ND} Editar Usuario."
 	echo -e "${CIAN}3.${ND} Eliminar usuario."
 	echo -e "${CIAN}4.${ND} Comprobar cambios de usuario."
-	echo -e "${ROJO}5.Volver atras.${ND}"
+	echo -e "${ROJO}5. Volver atras.${ND}"
 	echo -e "${AZUL}========================${ND}"
 }
 #Menu Fingerprint
