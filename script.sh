@@ -99,7 +99,7 @@ function fun_ataque_dicci() {
         fun_elec_dicc
         ficherohash=$(date '+%F-%H-%S')_hash__resultado.txt
         #Ataque de diccionario
-        john --wordlist="$pathdiccionario" --format=Raw-"$formato" temp.txt > /dev/null 2>&1 &
+        john --wordlist="$pathdiccionario" --format=Raw-"$formato" temp.txt > /dev/null 2>&1 
         john --show temp.txt --format=Raw-"$formato" | awk -F ":" '/\?:/{print "La contraseña es:", $2}'| tee "$ficherohash"
         # Confirmacion para avanzar
         read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
