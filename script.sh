@@ -108,7 +108,7 @@ function fun_ataque_dicci() {
         fun_elec_dicc
         if [ -n "$pathdiccionario" ]; then
             ficherohash=$(date '+%F-%H-%S')_hash__resultado.txt
-            hashcat -m 0 -a 0  temp.txt "$pathdiccionario" > /dev/null 2>&1 &
+            hashcat -m 0 -a 0  temp.txt "$pathdiccionario" > /dev/null 2>&1
             hashcat -m 0 -a 0  --show temp.txt | awk -F ":" '{print "La contraseña es:", $2}' | tee "$ficherohash"
             # Confirmacion para avanzar
             read -rsp $'Pulsa cualquier tecla para continuar...\n' -n1 tecla
